@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .chat-container {
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .chat-box p {
+            margin: 0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .chat-box .user {
+            background-color: #d1e7dd;
+            text-align: right;
+        }
+        .chat-box .bot {
+            background-color: #f8d7da;
+            text-align: left;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+        }
+        .chat-input button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-left: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Digite sua mensagem...">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const message = userInput.value;
+
+            if (message.trim() === '') return;
+
+            // Adicionar mensagem do usuário ao chat
+            const userMessage = document.createElement('p');
+            userMessage.className = 'user';
+            userMessage.textContent = message;
+            chatBox.appendChild(userMessage);
+
+            // Enviar mensagem para o servidor
+            fetch('/chat_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Adicionar resposta do bot ao chat
+                const botMessage = document.createElement('p');
+                botMessage.className = 'bot';
+                botMessage.textContent = data.response;
+                chatBox.appendChild(botMessage);
+
+                // Limpar o campo de entrada
+                userInput.value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+    </script>
+</body>
+</html>
