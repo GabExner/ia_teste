@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+Flask-HTTPAuth
+nltk
+scikit-learn
+flask-swagger
+flask-swagger-ui
